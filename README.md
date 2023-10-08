@@ -2,10 +2,10 @@
 AI video translation service created as a study project for "Practical Machine Learning and Deep Learning" course at Innopolis University
 
 #### Team Members
-| Name Surname       | Position                                          |
-|---------------------|--------------------------------------------------|
-| Aleksandra Voronova | Data Engineering and Analysis, Machine Learning Engineering, Technical Writing |
-| Igor Abramov        | Data Analysis, Machine Learning Engineering, MLOps |
+| Name Surname       | Innopolis e-mail | Position                                          |
+|---------------------|------------------|--------------------------------|
+| Aleksandra Voronova | a.voronova@innopolis.university | Data Engineering and Analysis, Machine Learning Engineering, Technical Writing |
+| Igor Abramov        | ig.abramov@innopolis.university | Data Analysis, Machine Learning Engineering, MLOps |
 
 ## Project Structure Overview (preliminary)
 
