@@ -1,7 +1,7 @@
 # Lingua-Cosmica
 AI video translation service created as a study project for "Practical Machine Learning and Deep Learning" course at Innopolis University.
 
-#### Team Members
+### Team Members
 | Name Surname       | Innopolis e-mail | Position                                          |
 |---------------------|------------------|--------------------------------|
 | Aleksandra Voronova | a.voronova@innopolis.university | Data Engineering and Analysis, Machine Learning Engineering, Technical Writing |
@@ -11,14 +11,14 @@ AI video translation service created as a study project for "Practical Machine L
 
 The project is organized into three main components:
 
-##### Frontend:
+### Frontend:
 1. **Design (low level):** Create an user interface for interacting with the service.
 
 2. **Send request to Backend with video file:** Establish a communication channel with the backend to transmit video files for translation.
 
 3. **Receive processed video:** Retrieve the translated video from the backend for user access.
 
-##### Backend:
+### Backend:
 1. **Receive request (video file):** Accept incoming video files from the frontend.
 
 2. **Transfer video to ML-pipeline:** Facilitate the handover of video data to the ML-pipeline for processing.
@@ -27,7 +27,7 @@ The project is organized into three main components:
 
 4. **Send back to Frontend:** Forward the processed video to the frontend for user access.
 
-##### ML-pipeline:
+### ML-pipeline:
 1. **Receive video:** Accept the video file from the backend for translation.
 
 2. **Extract audio:** Isolate the audio component from the video for subsequent translation.
