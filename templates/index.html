@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lingua Cosmica</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Lingua Cosmica</h1>
+        <h4 style="color: grey">Igor Abramov, Aleksandra Voronova</h4>
+        <form action="/process_video" method="post">
+            <input type="text" name="videoLink" placeholder="Вставьте ссылку на видео с YouTube" required>
+            <button type="submit">Отправить</button>
+        </form>
+        <div id="loading" style="display:none;">Ожидайте...</div>
+        <div id="downloadButton" style="display:none;">
+            <a id="downloadLink" href="#" download>Скачать видео</a>
+        </div>
+        <div id="videoPlayer" style="display:none;">
+            <!-- Вставьте код для плеера здесь -->
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
