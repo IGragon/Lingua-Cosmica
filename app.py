@@ -12,7 +12,6 @@ def process_video():
     video_link = request.form['videoLink']
     
     # код для обработки ссылки и скачивания видео
-
     # Затычка
     yt = YouTube(video_link)
     yt.streams.filter(progressive=True, file_extension='mp4').first().download()
