@@ -1,0 +1,12 @@
+flask
+pytube
+fastapi
+starlette
+uvicorn
+transformers
+datasets
+sentencepiece
+pytube
+moviepy
+loguru
+torch
