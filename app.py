@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
-from pytube import YouTube
+from config import ML_SERVICE_ADDRESS, logger
+import requests
 
 app = Flask(__name__)
 
@@ -14,10 +15,10 @@ def process_video():
     video_link = request.form['videoLink']
 
     # код для обработки ссылки и скачивания видео
-    # Затычка
-    yt = YouTube(video_link)
-    yt.streams.filter(progressive=True, file_extension='mp4').first().download()
-
+    data = {"youtube_url": video_link}
+    response = requests.request("get", ML_SERVICE_ADDRESS, data=data)
+    return_data = response.json()
+    logger.info(return_data)
     # видос
     return 'static/video.mp4'
 

@@ -24,7 +24,7 @@ class VoiceSynthesizer:
             audio = self.model.generate_speech(input_values,
                                                speaker_embeddings=self.speaker_embeddings,
                                                vocoder=self.vocoder)
-        sf.write(output_path, audio[0].numpy(), self.processor.feature_extractor.sampling_rate)
+        sf.write(output_path, audio.numpy(), self.processor.feature_extractor.sampling_rate)
 
 
 class VideoTranslator:
