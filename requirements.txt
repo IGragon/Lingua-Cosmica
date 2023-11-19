@@ -10,6 +10,7 @@ sentencepiece
 pytube==15.0.0
 ffmpeg
 moviepy==1.0.3
+scipy
 loguru
 torch
 torchaudio
