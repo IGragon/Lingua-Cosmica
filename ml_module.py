@@ -19,9 +19,9 @@ class VoiceSynthesizer:
         self.speaker_embeddings = torch.tensor(embeddings_dataset[7306]["xvector"]).unsqueeze(0)
 
     def synthesize(self, text, output_path):
-        input_values = self.processor(text, return_tensors="pt").input_values
+        input_values = self.processor(text=text, return_tensors="pt")
         with torch.no_grad():
-            audio = self.model.generate_speech(input_values,
+            audio = self.model.generate_speech(input_values["input_ids"],
                                                speaker_embeddings=self.speaker_embeddings,
                                                vocoder=self.vocoder)
         sf.write(output_path, audio.numpy(), self.processor.feature_extractor.sampling_rate)
@@ -33,21 +33,32 @@ class VideoTranslator:
         self.audio_synthesizer = VoiceSynthesizer()
 
     def process(self, youtube_video_url) -> (str, bool):
-        video_path, audio_path = download_video(youtube_video_url)
-        if video_path is None or audio_path is None:
+        try:
+            video_path = download_video(youtube_video_url)
+            logger.info("Downloaded video")
+        except Exception as e:
+            logger.error(f"Error downloading video: {type(e).__name__} {e}")
             return "", False
 
-        audio_array, sampling_rate = extract_audio_signal_and_sampling_rate(audio_path)
+        try:
+            audio_array, sampling_rate = extract_audio_signal_and_sampling_rate(video_path)
+            logger.info("Extracted audio signal and sampling rate")
+        except Exception as e:
+            logger.error(f"Error extracting audio signal and sampling rate: {type(e).__name__} {e}")
+            return "", False
+
         if DEBUG:
             logger.info("Trim audio to 10 seconds")
             audio_array = audio_array[:sampling_rate * 10]  # 10 seconds
 
         # TODO: translate audio by portions (maybe)
         translated_text = self.apply_stt(audio_array, sampling_rate)
+        logger.info("Translated text")
 
-        output_audio_path = "translated_" + audio_path.replace(".mp4", ".wav")[6:]
+        output_audio_path = video_path.replace("video_", "translated_").replace(".mp4", ".wav")
         self.audio_synthesizer.synthesize(translated_text, output_audio_path)
         new_video_path, success = merge_new_audio(video_path, output_audio_path)
+        logger.info("Finished processing video")
         return new_video_path, success
 
     def apply_stt(self, audio_array, sampling_rate, language="es"):
