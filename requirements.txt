@@ -1,0 +1,17 @@
+numpy==1.23.5
+flask
+pytube
+fastapi
+starlette
+uvicorn
+transformers
+datasets
+sentencepiece
+pytube==15.0.0
+ffmpeg
+moviepy==1.0.3
+scipy
+loguru
+torch
+torchaudio
+audiostretchy
