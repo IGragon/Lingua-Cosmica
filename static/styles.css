@@ -39,3 +39,40 @@ button:hover {
 #videoPlayer {
     margin-top: 20px;
 }
+
+.language-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+}
+
+.language-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    border: 2px solid #3498db;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.language-button:last-child {
+    margin-right: 0; 
+}
+
+.language-button input {
+    display: none;
+}
+
+.language-button span {
+    margin-top: 5px;
+}
+
+.language-button input:checked + span {
+    color: #3498db;
+    font-weight: bold;
+}
+
+.language-button input:disabled + span {
+    color: #aaa;
+}
