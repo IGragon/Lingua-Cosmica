@@ -19,7 +19,7 @@ def process_video():
     # код для обработки ссылки и скачивания видео
     return_link, success = video_translator.process(video_link)
     if success:
-        return 'static/video.mp4'
+        return return_link
     else:
         logger.info("Failed to process video")
         return ...  # render_template('error.html')
