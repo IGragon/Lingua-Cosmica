@@ -1,11 +1,10 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_file
 from ml_module import VideoTranslator
 from config import logger
 
 video_translator = VideoTranslator()
 
 app = Flask(__name__)
-
 
 @app.route('/')
 def index():
@@ -24,6 +23,16 @@ def process_video():
         logger.info("Failed to process video")
         return ...  # render_template('error.html')
 
+    # Затычка
+    yt = YouTube(video_link)
+    yt.streams.filter(progressive=True, file_extension='mp4').first().download()
+    
+    # видос
+    return 'static/video.mp4'
+
+@app.route('/download')
+def download():
+    return send_file('static/video.mp4', as_attachment=True)
 
 if __name__ == '__main__':
     app.run(debug=True)
