@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, send_file
+from flask import Flask, render_template, request, send_file, jsonify
 from pytube import YouTube
 
 app = Flask(__name__)
@@ -13,17 +13,24 @@ def index():
 def process_video():
     video_link = request.form['videoLink']
     
-    # код для обработки ссылки и скачивания видео
+    from_language = request.form["fromLanguageSelect"]
+    to_language = request.form["toLanguageSelect"]
 
-    # download video
+    print (from_language)
+
+    # download
     yt = YouTube(video_link)
-    video_stream = yt.streams.filter(progressive=True, file_extension='mp4').first().download(output_path = 'static/', filename = "video.mp4")
+    video_stream = yt.streams.filter(progressive=True, file_extension='mp4').first().download(output_path='static/', filename=f'video_{from_language}_to_{to_language}.mp4')
+    video_path = f'static/video_{from_language}_to_{to_language}.mp4'
 
-    return send_file('static/video.mp4', as_attachment=True)
+    # Return JSON response with video_path and video_url
+    return jsonify({'video_path': video_path, 'video_url': '/download?video_path=' + video_path})
+
 
 @app.route('/download')
 def download():
-    return send_file('static/video.mp4', as_attachment=True)
+    video_path = request.args.get('video_path', '')
+    return send_file(video_path, as_attachment=True)
 
 if __name__ == '__main__':
     app.run(debug=True)
