@@ -9,7 +9,7 @@ document.querySelector('form').addEventListener('submit', function(e) {
 
     loadingDiv.style.display = 'block';
 
-    // Отправка данных на сервер
+    // Sending data to server
     fetch('/process_video', {
         method: 'POST',
         headers: {
@@ -17,12 +17,17 @@ document.querySelector('form').addEventListener('submit', function(e) {
         },
         body: 'videoLink=' + encodeURIComponent(videoLink)
     })
-    .then(response => response.text())
-    .then(videoUrl => {
+    .then(response => response.blob())
+    .then(blob => {
         loadingDiv.style.display = 'none';
         downloadButtonDiv.style.display = 'block';
-        downloadLink.href = videoUrl;
+        
+        // Create a link to download a video
+        var videoUrl = URL.createObjectURL(blob);
+        downloadLink.href = '/download';  // Update the download link
+        downloadLink.onclick = function() { location.href = videoUrl; };  // Add a download event handler
+        videoPlayerElement.src = videoUrl;
+        videoPlayerElement.pause(); // Pause video
+        videoPlayerDiv.style.display = 'block';
     });
-
-    // Здесь может быть плеер
 });
