@@ -12,7 +12,43 @@
         <h4 style="color: grey">Igor Abramov, Aleksandra Voronova</h4>
         <form action="/process_video" method="post">
             <input type="text" name="videoLink" placeholder="Paste a link to YouTube video" required>
+
+            <!-- Radiobuttons for languages FROM -->
+            <h4 style="color: black">FROM</h4>
+            <div class="language-buttons">
+                <label class="language-button">
+                    <input type="radio" id="fromLanguageSelectEN" name="fromLanguageSelect" value="en" onclick="updateToLanguageOptions()"> 
+                    <span>English</span>
+                </label>
+                <label class="language-button">
+                    <input type="radio" id="fromLanguageSelectRU" name="fromLanguageSelect" value="rus" onclick="updateToLanguageOptions()"> 
+                    <span>Russian</span>
+                </label>
+                <label class="language-button">
+                    <input type="radio" id="fromLanguageSelectES" name="fromLanguageSelect" value="es" onclick="updateToLanguageOptions()"> 
+                    <span>Spanish</span>
+                </label>
+            </div>
+
+            <!-- Radiobuttons for languages TO -->
+            <h4 style="color: black">TO</h4>
+            <div class="language-buttons">
+                <label class="language-button">
+                    <input type="radio" id="toLanguageSelectEN" name="toLanguageSelect" value="en" onclick="updateFromLanguageOptions()"> 
+                    <span>English</span>
+                </label>
+                <label class="language-button">
+                    <input type="radio" id="toLanguageSelectRU" name="toLanguageSelect" value="rus" onclick="updateFromLanguageOptions()"> 
+                    <span>Russian</span>
+                </label>
+                <label class="language-button">
+                    <input type="radio" id="toLanguageSelectES" name="toLanguageSelect" value="es" onclick="updateFromLanguageOptions()"> 
+                    <span>Spanish</span>
+                </label>
+            </div>
+
             <button type="submit">Send</button>
+
         </form>
         <div id="loading" style="display:none;">Loading...</div>
         <div id="downloadButton" style="display:none;">
