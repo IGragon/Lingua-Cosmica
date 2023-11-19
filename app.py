@@ -19,22 +19,12 @@ def process_video():
     to_language = request.form["toLanguageSelect"]
 
     # код для обработки ссылки и скачивания видео
-    return_link, success = video_translator.process(video_link, "spa")
+    return_link, success = video_translator.process(video_link, to_language)
     if success:
-        return send_file(return_link, as_attachment=True)
+        return jsonify({'video_path': return_link, 'video_url': '/download?video_path=' + return_link})
     else:
         logger.info("Failed to process video")
         return ...  # render_template('error.html')
-
-    print (from_language)
-
-    # download
-    yt = YouTube(video_link)
-    video_stream = yt.streams.filter(progressive=True, file_extension='mp4').first().download(output_path='static/', filename=f'video_{from_language}_to_{to_language}.mp4')
-    video_path = f'static/video_{from_language}_to_{to_language}.mp4'
-
-    # Return JSON response with video_path and video_url
-    return jsonify({'video_path': video_path, 'video_url': '/download?video_path=' + video_path})
 
 
 @app.route('/download')

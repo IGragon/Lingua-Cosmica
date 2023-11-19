@@ -7,6 +7,7 @@ from transformers import pipeline
 from transformers import VitsModel, AutoTokenizer
 import torch
 import soundfile as sf
+from audiostretchy import stretch
 
 
 class VoiceSynthesizer:
@@ -48,7 +49,7 @@ class VideoTranslator:
             return "", False
 
         if DEBUG:
-            audio_array = audio_array[:30 * sampling_rate]
+            audio_array = audio_array[:50 * sampling_rate]
 
         audio_parts = []
         for i in range(0, (len(audio_array) // sampling_rate + AUDIO_CHUNK_SIZE - 1) // AUDIO_CHUNK_SIZE):
@@ -73,6 +74,8 @@ class VideoTranslator:
         output_sampling_rate = self.audio_synthesizer.models[language].config.sampling_rate
         audio = np.concatenate(synthesized_audios)
         sf.write(output_audio_path, audio, output_sampling_rate)
+        stretch.stretch_audio(output_audio_path, output_audio_path,
+                              (len(audio_array) / sampling_rate) / (len(audio) / output_sampling_rate))
         new_video_path, success = merge_new_audio(video_path, output_audio_path)
         logger.info("Finished processing video")
         return new_video_path, success
@@ -83,4 +86,3 @@ class VideoTranslator:
                                     max_new_tokens=256,
                                     generate_kwargs={"task": "transcribe", "language": whisper_languages[language]})
         return outputs["text"]
-
