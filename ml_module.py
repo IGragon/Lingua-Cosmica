@@ -52,6 +52,7 @@ class VideoTranslator:
             audio_array = audio_array[:50 * sampling_rate]
 
         audio_parts = []
+        # https://github.com/openai/whisper/discussions/1243
         for i in range(0, (len(audio_array) // sampling_rate + AUDIO_CHUNK_SIZE - 1) // AUDIO_CHUNK_SIZE):
             start = i * AUDIO_CHUNK_SIZE * sampling_rate
             end = start + AUDIO_CHUNK_SIZE * sampling_rate
