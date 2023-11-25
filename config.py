@@ -5,7 +5,7 @@ from loguru import logger
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 logger.info(f"Using device: {DEVICE}")
 
-ASR_MODEL = "openai/whisper-small"
+ASR_MODEL = "small"
 
 DEBUG = True
 
@@ -17,7 +17,7 @@ os.makedirs(VIDEO_STORAGE_PATH, exist_ok=True)
 MAX_RESOLUTION = 720
 
 supported_languages = ["eng", "spa", "rus"]
-whisper_languages = {
+full_languages = {
     "eng": "english",
     "spa": "spanish",
     "rus": "russian",
