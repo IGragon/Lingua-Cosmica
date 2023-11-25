@@ -46,7 +46,7 @@ document.querySelector('form').addEventListener('submit', function(e) {
         // Pass video_path to the /download endpoint
         downloadLink.href = '/download?video_path=' + encodeURIComponent(data.video_path);
         
-        downloadLink.onclick = function() { location.href = downloadLink.href; };  // Add a download event handler
+        //downloadLink.onclick = function() { location.href = downloadLink.href; };  // Add a download event handler
         videoPlayerElement.src = data.video_url;
         videoPlayerElement.pause(); // Pause video
         videoPlayerDiv.style.display = 'block';
