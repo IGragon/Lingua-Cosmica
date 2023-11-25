@@ -1,7 +1,7 @@
 from moviepy.audio.AudioClip import CompositeAudioClip
 from moviepy.audio.io.AudioFileClip import AudioFileClip
 
-from config import logger, VIDEO_STORAGE_PATH, AUDIO_STORAGE_PATH
+from config import logger, VIDEO_STORAGE_PATH
 from pytube import YouTube
 
 from moviepy.editor import VideoFileClip

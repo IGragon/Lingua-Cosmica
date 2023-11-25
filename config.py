@@ -10,9 +10,9 @@ ASR_MODEL = "openai/whisper-small"
 DEBUG = True
 
 VIDEO_STORAGE_PATH = "./data/videos"
-AUDIO_STORAGE_PATH = "./data/audios"
+# AUDIO_STORAGE_PATH = "./data/audios"
 os.makedirs(VIDEO_STORAGE_PATH, exist_ok=True)
-os.makedirs(AUDIO_STORAGE_PATH, exist_ok=True)
+# os.makedirs(AUDIO_STORAGE_PATH, exist_ok=True)
 
 MAX_RESOLUTION = 720
 
