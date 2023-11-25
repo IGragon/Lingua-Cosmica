@@ -52,10 +52,9 @@ class VideoTranslator:
             audio_array = audio_array[:50 * sampling_rate]
 
         audio_parts = []
-        for i in range(0, (len(audio_array) // sampling_rate + AUDIO_CHUNK_SIZE - 1) // AUDIO_CHUNK_SIZE):
-            start = i * AUDIO_CHUNK_SIZE * sampling_rate
-            end = start + AUDIO_CHUNK_SIZE * sampling_rate
-            audio_parts.append(audio_array[start:end])
+        for i in range(0, len(audio_array), AUDIO_CHUNK_SIZE * sampling_rate):
+            audio_part = audio_array[i:i + AUDIO_CHUNK_SIZE * sampling_rate]
+            audio_parts.append(audio_part)
 
         texts = []
         for audio_part in audio_parts:
@@ -74,8 +73,21 @@ class VideoTranslator:
         output_sampling_rate = self.audio_synthesizer.models[language].config.sampling_rate
         audio = np.concatenate(synthesized_audios)
         sf.write(output_audio_path, audio, output_sampling_rate)
+
+        with open(output_audio_path, "rb") as f:
+            output_duration_seconds = sf.info(f).duration
+
+        original_duration_seconds = len(audio_array) / sampling_rate
+        stretch_ratio = original_duration_seconds / output_duration_seconds
+        logger.info(f"Stretch ratio: {stretch_ratio}")
         stretch.stretch_audio(output_audio_path, output_audio_path,
-                              (len(audio_array) / sampling_rate) / (len(audio) / output_sampling_rate))
+                              ratio=stretch_ratio,
+                              double_range=True)
+
+        data, samplerate = sf.read(output_audio_path)
+        data = data[: round(samplerate * original_duration_seconds)]
+        sf.write(output_audio_path, data, samplerate)
+
         new_video_path, success = merge_new_audio(video_path, output_audio_path)
         logger.info("Finished processing video")
         return new_video_path, success
