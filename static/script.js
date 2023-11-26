@@ -67,6 +67,6 @@ document.querySelector('form').addEventListener('submit', function(e) {
         errorMessageDiv.style.display = 'block';
         console.error('There was a problem with the fetch operation:', error);
         // Display or log an error message on the page
-        errorMessageDiv.textContent = 'An error occurred: ' + error.message;
+        errorMessageDiv.textContent = 'Sorry, we were not able to process this video';
     });
 });
