@@ -1,13 +1,15 @@
 import numpy as np
 
-from config import logger, DEBUG, DEVICE, supported_languages, AUDIO_CHUNK_SIZE, ASR_MODEL, whisper_languages
+from config import logger, DEBUG, DEVICE, supported_languages, ASR_MODEL, full_languages
 from utils import download_video, extract_audio_signal_and_sampling_rate, merge_new_audio
 
-from transformers import pipeline
 from transformers import VitsModel, AutoTokenizer
+import whisper
 import torch
 import soundfile as sf
+import librosa
 from audiostretchy import stretch
+from nltk import sent_tokenize
 
 
 class VoiceSynthesizer:
@@ -22,6 +24,9 @@ class VoiceSynthesizer:
 
     def synthesize(self, text, language):
         inputs = self.tokenizers[language](text, return_tensors="pt")
+        if inputs["input_ids"].shape[1] == 0:
+            return None
+
         with torch.no_grad():
             output = self.models[language](**inputs).waveform.float().numpy()[0]
 
@@ -30,7 +35,7 @@ class VoiceSynthesizer:
 
 class VideoTranslator:
     def __init__(self):
-        self.stt_pipeline = pipeline("automatic-speech-recognition", model=ASR_MODEL, device=DEVICE)
+        self.stt_model = whisper.load_model(ASR_MODEL, device=DEVICE)
         self.audio_synthesizer = VoiceSynthesizer()
 
     def process(self, youtube_video_url, language) -> (str, bool):
@@ -49,26 +54,26 @@ class VideoTranslator:
             return "", False
 
         if DEBUG:
-            audio_array = audio_array[:50 * sampling_rate]
+            audio_array = audio_array[:120 * sampling_rate]
 
-        audio_parts = []
-        for i in range(0, len(audio_array), AUDIO_CHUNK_SIZE * sampling_rate):
-            audio_part = audio_array[i:i + AUDIO_CHUNK_SIZE * sampling_rate]
-            audio_parts.append(audio_part)
-
-        texts = []
-        for audio_part in audio_parts:
-            text = self.apply_stt(audio_part, sampling_rate, language)
-            texts.append(text)
-            logger.info(f"Processed audio part {len(texts)} / {len(audio_parts)}")
+        texts = self.apply_stt(audio_array, sampling_rate, language)
 
         output_audio_path = video_path.replace("video_", "translated_").replace(".mp4", ".wav")
 
         synthesized_audios = []
-        for i, (text, audio_part) in enumerate(zip(texts, audio_parts)):
+        for i, text in enumerate(texts):
             synthesized_audio = self.audio_synthesizer.synthesize(text, language)
             synthesized_audios.append(synthesized_audio)
             logger.info(f"Synthesized audio {len(synthesized_audios)} / {len(texts)}")
+
+        failed_synth = len([audio for audio in synthesized_audios if audio is None])
+
+        if failed_synth > 0:
+            logger.warning(f"Failed to synthesize {failed_synth} audio part(s)")
+            average_synth_len = sum(len(audio) for audio in synthesized_audios if audio is not None) / len([audio for audio in synthesized_audios if audio is not None])
+            for i in range(len(synthesized_audios)):
+                if synthesized_audios[i] is None:
+                    synthesized_audios[i] = np.zeros((int(average_synth_len), ))
 
         output_sampling_rate = self.audio_synthesizer.models[language].config.sampling_rate
         audio = np.concatenate(synthesized_audios)
@@ -92,9 +97,9 @@ class VideoTranslator:
         logger.info("Finished processing video")
         return new_video_path, success
 
-    def apply_stt(self, audio_array, sampling_rate, language):
-        audio = {"array": audio_array, "sampling_rate": sampling_rate}
-        outputs = self.stt_pipeline(audio,
-                                    max_new_tokens=256,
-                                    generate_kwargs={"task": "transcribe", "language": whisper_languages[language]})
-        return outputs["text"]
+    def apply_stt(self, audio_array: np.array, sampling_rate: int, language: str):
+        resampled_audio = librosa.resample(audio_array, orig_sr=sampling_rate, target_sr=whisper.audio.SAMPLE_RATE)
+        outputs = self.stt_model.transcribe(resampled_audio.astype(np.float32), language=full_languages[language])
+        output_text = outputs["text"]
+        sentence_tokens = sent_tokenize(output_text, language=full_languages[language])
+        return sentence_tokens
