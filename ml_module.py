@@ -24,6 +24,9 @@ class VoiceSynthesizer:
 
     def synthesize(self, text, language):
         inputs = self.tokenizers[language](text, return_tensors="pt")
+        if inputs["input_ids"].shape[1] == 0:
+            return None
+
         with torch.no_grad():
             output = self.models[language](**inputs).waveform.float().numpy()[0]
 
@@ -51,18 +54,7 @@ class VideoTranslator:
             return "", False
 
         if DEBUG:
-            audio_array = audio_array[:50 * sampling_rate]
-
-        # audio_parts = []
-        # for i in range(0, len(audio_array), AUDIO_CHUNK_SIZE * sampling_rate):
-        #     audio_part = audio_array[i:i + AUDIO_CHUNK_SIZE * sampling_rate]
-        #     audio_parts.append(audio_part)
-
-        # texts = []
-        # for audio_part in audio_parts:
-        #     text = self.apply_stt(audio_part, sampling_rate, language)
-        #     texts.append(text)
-        #     logger.info(f"Processed audio part {len(texts)} / {len(audio_parts)}")
+            audio_array = audio_array[:120 * sampling_rate]
 
         texts = self.apply_stt(audio_array, sampling_rate, language)
 
@@ -73,6 +65,15 @@ class VideoTranslator:
             synthesized_audio = self.audio_synthesizer.synthesize(text, language)
             synthesized_audios.append(synthesized_audio)
             logger.info(f"Synthesized audio {len(synthesized_audios)} / {len(texts)}")
+
+        failed_synth = len([audio for audio in synthesized_audios if audio is None])
+
+        if failed_synth > 0:
+            logger.warning(f"Failed to synthesize {failed_synth} audio part(s)")
+            average_synth_len = sum(len(audio) for audio in synthesized_audios if audio is not None) / len([audio for audio in synthesized_audios if audio is not None])
+            for i in range(len(synthesized_audios)):
+                if synthesized_audios[i] is None:
+                    synthesized_audios[i] = np.zeros((int(average_synth_len), ))
 
         output_sampling_rate = self.audio_synthesizer.models[language].config.sampling_rate
         audio = np.concatenate(synthesized_audios)
