@@ -27,8 +27,13 @@ document.querySelector('form').addEventListener('submit', function(e) {
     var downloadButtonDiv = document.getElementById('downloadButton');
     var videoPlayerDiv = document.getElementById('videoPlayer');
     var downloadLink = document.getElementById('downloadLink');
+    var errorMessageDiv = document.getElementById('error-message');
 
     loadingDiv.style.display = 'block';
+    // Hide Download button and videoplayer on each new request
+    downloadButtonDiv.style.display = 'none';
+    videoPlayerDiv.style.display = 'none';
+    errorMessageDiv.style.display = 'none';
 
     // Sending data to server
     fetch('/process_video', {
@@ -38,9 +43,15 @@ document.querySelector('form').addEventListener('submit', function(e) {
         },
         body: 'videoLink=' + encodeURIComponent(videoLink) + '&fromLanguageSelect=' + encodeURIComponent(fromLanguage) + '&toLanguageSelect=' + encodeURIComponent(toLanguage)
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
     .then(data => {
         loadingDiv.style.display = 'none';
+
         downloadButtonDiv.style.display = 'block';
         
         // Pass video_path to the /download endpoint
@@ -50,5 +61,12 @@ document.querySelector('form').addEventListener('submit', function(e) {
         videoPlayerElement.src = data.video_url;
         videoPlayerElement.pause(); // Pause video
         videoPlayerDiv.style.display = 'block';
+    })
+    .catch(error => {
+        loadingDiv.style.display = 'none';
+        errorMessageDiv.style.display = 'block';
+        console.error('There was a problem with the fetch operation:', error);
+        // Display or log an error message on the page
+        errorMessageDiv.textContent = 'Sorry, we were not able to process this video';
     });
 });
