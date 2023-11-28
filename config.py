@@ -7,14 +7,12 @@ nltk.download('punkt')
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 logger.info(f"Using device: {DEVICE}")
 
-ASR_MODEL = "small"
+ASR_MODEL = "medium"
 
-DEBUG = True
+DEBUG = False
 
 VIDEO_STORAGE_PATH = "./data/videos"
-# AUDIO_STORAGE_PATH = "./data/audios"
 os.makedirs(VIDEO_STORAGE_PATH, exist_ok=True)
-# os.makedirs(AUDIO_STORAGE_PATH, exist_ok=True)
 
 MAX_RESOLUTION = 720
 
@@ -25,6 +23,27 @@ full_languages = {
     "rus": "russian",
 }
 
-AUDIO_CHUNK_SIZE = 10  # in seconds
+
+USE_WANDB = True
+
+if USE_WANDB:
+    try:
+        import wandb
+        from dotenv import load_dotenv
+        load_dotenv()
+        WANDB_KEY = os.getenv("WANDB_KEY")
+        wandb.login(key=WANDB_KEY)
+        wandb.init(
+            # set the wandb project where this run will be logged
+            project="LinguaCosmica",
+            config={
+                "whisper_model": ASR_MODEL,
+                "device": DEVICE,
+            }
+        )
+        logger.info("W&B monitoring successfully initialized")
+    except BaseException as e:
+        USE_WANDB = False
+        logger.warning(f"Could not initialize W&B: {str(e)}")
 
 logger.info("Config loaded")
