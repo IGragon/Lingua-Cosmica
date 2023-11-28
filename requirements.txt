@@ -12,3 +12,5 @@ nltk==3.8.1
 openai-whisper==20231117
 torchaudio
 sentencepiece
+python-dotenv
+wandb

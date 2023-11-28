@@ -23,7 +23,7 @@ def process_video():
     if success:
         return jsonify({'video_path': return_link, 'video_url': '/download?video_path=' + return_link})
     else:
-        logger.info("Failed to process video")
+        logger.info(f"Failed to process video: {video_link}")
         return ...  # render_template('error.html')
 
 

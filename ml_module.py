@@ -1,6 +1,6 @@
 import numpy as np
 
-from config import logger, DEBUG, DEVICE, supported_languages, ASR_MODEL, full_languages
+from config import logger, DEBUG, DEVICE, supported_languages, ASR_MODEL, full_languages, USE_WANDB
 from utils import download_video, extract_audio_signal_and_sampling_rate, merge_new_audio
 
 from transformers import VitsModel, AutoTokenizer
@@ -11,6 +11,10 @@ import librosa
 from audiostretchy import stretch
 from nltk import sent_tokenize
 
+import time
+
+if USE_WANDB:
+    from config import wandb
 
 class VoiceSynthesizer:
     def __init__(self):
@@ -56,18 +60,23 @@ class VideoTranslator:
         if DEBUG:
             audio_array = audio_array[:120 * sampling_rate]
 
+        stt_start = time.time()
         texts = self.apply_stt(audio_array, sampling_rate, language)
+        stt_end = time.time()
+        stt_time = stt_end - stt_start
 
         output_audio_path = video_path.replace("video_", "translated_").replace(".mp4", ".wav")
 
+        tts_start = time.time()
         synthesized_audios = []
         for i, text in enumerate(texts):
             synthesized_audio = self.audio_synthesizer.synthesize(text, language)
             synthesized_audios.append(synthesized_audio)
             logger.info(f"Synthesized audio {len(synthesized_audios)} / {len(texts)}")
+        tts_end = time.time()
+        tts_time = tts_end - tts_start
 
         failed_synth = len([audio for audio in synthesized_audios if audio is None])
-
         if failed_synth > 0:
             logger.warning(f"Failed to synthesize {failed_synth} audio part(s)")
             average_synth_len = sum(len(audio) for audio in synthesized_audios if audio is not None) / len([audio for audio in synthesized_audios if audio is not None])
@@ -94,6 +103,15 @@ class VideoTranslator:
         sf.write(output_audio_path, data, samplerate)
 
         new_video_path, success = merge_new_audio(video_path, output_audio_path)
+        if USE_WANDB:
+            wandb.log({
+                "stt_time": stt_time,
+                "tts_time": tts_time,
+                "failed_synth": failed_synth,
+                "translated_texts": len(texts),
+                "stretch_ratio": stretch_ratio
+            })
+
         logger.info("Finished processing video")
         return new_video_path, success
 
