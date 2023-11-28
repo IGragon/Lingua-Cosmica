@@ -1,6 +1,12 @@
 # Lingua-Cosmica
 AI video translation service created as a study project for "Practical Machine Learning and Deep Learning" course at Innopolis University.
 
+### Team Members
+| Name Surname       | Innopolis e-mail | Position                                          |
+|---------------------|------------------|--------------------------------|
+| Aleksandra Voronova | a.voronova@innopolis.university | Data Engineering and Analysis, Machine Learning Engineering, Technical Writing |
+| Igor Abramov        | ig.abramov@innopolis.university | Data Analysis, Machine Learning Engineering, MLOps |
+
 ## Running Locally
 To run the project locally follow these steps:
 
@@ -12,12 +18,6 @@ To run the project locally follow these steps:
 ``pip3 install -r requirements.txt``
 5. Run the app
 ``python -m flask run``
-
-### Team Members
-| Name Surname       | Innopolis e-mail | Position                                          |
-|---------------------|------------------|--------------------------------|
-| Aleksandra Voronova | a.voronova@innopolis.university | Data Engineering and Analysis, Machine Learning Engineering, Technical Writing |
-| Igor Abramov        | ig.abramov@innopolis.university | Data Analysis, Machine Learning Engineering, MLOps |
 
 ## Project Structure Overview (preliminary)
 
