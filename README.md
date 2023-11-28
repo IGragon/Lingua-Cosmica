@@ -1,6 +1,18 @@
 # Lingua-Cosmica
 AI video translation service created as a study project for "Practical Machine Learning and Deep Learning" course at Innopolis University.
 
+## Running Locally
+To run the project locally follow these steps:
+
+1. Clone or download the repository to your environment
+``git clone https://github.com/IGragon/Lingua-Cosmica.git``
+3. Go to the directory
+``cd ./Lingua-Cosmica/``
+4. Install the requirements.txt
+``pip3 install -r requirements.txt``
+5. Run the app
+``python -m flask run``
+
 ### Team Members
 | Name Surname       | Innopolis e-mail | Position                                          |
 |---------------------|------------------|--------------------------------|
