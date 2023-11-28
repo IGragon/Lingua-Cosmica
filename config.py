@@ -8,6 +8,8 @@ DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 logger.info(f"Using device: {DEVICE}")
 
 ASR_MODEL = "medium"
+if ASR_MODEL == "large":
+    DEVICE = "cpu"
 
 DEBUG = False
 
@@ -24,7 +26,7 @@ full_languages = {
 }
 
 
-USE_WANDB = True
+USE_WANDB = False
 
 if USE_WANDB:
     try:
