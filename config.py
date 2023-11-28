@@ -1,6 +1,8 @@
 import os
 import torch
 from loguru import logger
+import nltk
+nltk.download('punkt')
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 logger.info(f"Using device: {DEVICE}")
