@@ -16,7 +16,7 @@ To run the project locally follow these steps:
 ``cd ./Lingua-Cosmica/``
 4. Install the requirements.txt
 ``pip3 install -r requirements.txt``
-5. Configure config.py file that suits you or leave default settings
+5. Configure [config.py](./config.py) file that suits you or leave default settings
 6. (optional) create .env file and add WANDB_KEY to monitor service, you also need to set USE_WANDB=True in config.py
 7. Run the app
 ``python -m flask run``
